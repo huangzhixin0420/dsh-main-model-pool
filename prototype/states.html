@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  :root{
+    --bg-app:#151517;
+    --bg-panel:#1B1B1C;
+    --bg-card:#2C2C2E;
+    --text-1:#F9FAFB;
+    --text-2:#CFD3D6;
+    --text-3:#ADB2B8;
+    --text-4:#81858C;
+    --accent:#7AAAFF;
+    --line-1:rgba(255,255,255,.08);
+    --line-2:rgba(255,255,255,.16);
+    --fill-1:rgba(255,255,255,.06);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg-app);color:var(--text-1);font-family:var(--font);
+    -webkit-font-smoothing:antialiased;display:flex;align-items:flex-start;justify-content:center;
+    padding:56px 0;
+  }
+
+  /* 设置面板：与 DSH 浮层同构 */
+  .panel{
+    width:640px;background:var(--bg-panel);border:1px solid var(--line-1);
+    border-radius:20px;padding:22px 24px 18px;
+  }
+
+  .crumb{font-size:12px;color:var(--text-4);letter-spacing:.2px}
+  .crumb i{font-style:normal;opacity:.5;margin:0 6px}
+
+  .head{display:flex;align-items:flex-start;justify-content:space-between;margin-top:10px}
+  .title{font-size:15px;font-weight:600;letter-spacing:.2px}
+  .sub{margin-top:5px;font-size:12px;line-height:18px;color:var(--text-3);max-width:470px}
+
+  /* 开关 */
+  .switch{width:36px;height:20px;border-radius:999px;background:var(--accent);position:relative;flex:none;margin-top:2px}
+  .switch::after{content:"";position:absolute;top:2px;left:18px;width:16px;height:16px;border-radius:50%;background:#151517}
+
+  .divider{height:1px;background:var(--line-1);margin:16px 0 14px}
+
+  .sec{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px}
+  .sec-title{font-size:13px;font-weight:500}
+  .sec-title span{color:var(--text-4);font-weight:400;margin-left:6px;font-size:12px}
+  .link{font-size:12px;color:var(--accent);cursor:pointer}
+
+  .group{margin-top:12px}
+  .group-name{font-size:11px;font-weight:500;color:var(--text-4);letter-spacing:.2px;margin-bottom:4px}
+
+  .row{display:flex;align-items:center;gap:0;height:32px;padding:0 8px;border-radius:8px;margin-bottom:2px}
+  .row.on{background:rgba(255,255,255,.035)}
+  .row .cb{width:14px;height:14px;accent-color:var(--accent);flex:none;margin-right:10px;cursor:pointer}
+  .row .name{font-size:13px;letter-spacing:.1px;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row.off .name{color:var(--text-3)}
+  .row .name b{font-weight:400;color:var(--text-4);margin:0 4px}
+  .field{display:flex;align-items:center;gap:6px;margin-left:14px;flex:none}
+  .field label{font-size:11px;color:var(--text-4);letter-spacing:.2px}
+  .num{
+    width:56px;height:24px;border-radius:8px;border:1px solid var(--line-2);background:var(--fill-1);
+    color:var(--text-1);font-size:12px;text-align:center;font-family:var(--font);
+  }
+  .num:disabled{color:var(--text-4);border-color:var(--line-1);background:transparent}
+  .num::placeholder{color:var(--text-4);opacity:.8}
+  .num.on{border-color:rgba(122,170,255,.5)}
+
+  .summary{font-size:11px;color:var(--text-4);letter-spacing:.2px}
+
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:16px}
+  .foot .actions{display:flex;align-items:center;gap:8px}
+  .btn-ghost{font-size:12px;color:var(--text-3);padding:0 10px;height:28px;border-radius:8px;display:flex;align-items:center;cursor:pointer}
+  .btn-primary{font-size:12px;font-weight:500;color:#151517;background:var(--text-1);height:28px;padding:0 14px;border-radius:8px;display:flex;align-items:center;cursor:pointer}
+
+  .switch.off{background:rgba(255,255,255,.16)}
+  .switch.off::after{left:2px;background:#8E9298}
+  .num.bad{border-color:#FF6E6E;color:#FF9C9C;background:rgba(255,110,110,.06)}
+  .err{position:absolute;right:8px;top:34px;font-size:11px;color:#FF8A8A;letter-spacing:.2px}
+  .row{position:relative}
+  .btn-primary.disabled{background:rgba(249,250,251,.28);color:rgba(21,21,23,.55)}
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;gap:28px;padding:36px 0 44px">
+
+  <!-- A 停用态 -->
+  <div class="panel" style="padding-bottom:16px">
+    <div class="crumb">设置<i>/</i>主会话模型池</div>
+    <div class="head">
+      <div>
+        <div class="title">主会话模型池</div>
+        <div class="sub">新建会话时按优先级从池中选模型，池内全部占满则回退全局默认模型。</div>
+      <div class="sub" style="margin-top:2px;color:var(--text-4)">已有会话、fork 与子代理不受影响。</div>
+      </div>
+      <div class="switch off"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sec"><div class="sec-title">候选模型<span>2 / 6</span></div><div class="link" style="opacity:.4">清空已选</div></div>
+    <div class="group" style="opacity:.5">
+      <div class="group-name">c2a</div>
+      <div class="row on"><input class="cb" type="checkbox" checked disabled><div class="name">paid</div>
+        <div class="field"><label>并发</label><input class="num" value="3" disabled></div>
+        <div class="field"><label>优先级</label><input class="num" value="8" disabled></div></div>
+      <div class="row on"><input class="cb" type="checkbox" checked disabled><div class="name">free</div>
+        <div class="field"><label>并发</label><input class="num" value="3" disabled></div>
+        <div class="field"><label>优先级</label><input class="num" value="2" disabled></div></div>
+      <div class="row off"><input class="cb" type="checkbox" disabled><div class="name">Intelligence</div>
+        <div class="field"><label>并发</label><input class="num" placeholder="—" disabled></div>
+        <div class="field"><label>优先级</label><input class="num" placeholder="—" disabled></div></div>
+    </div>
+    <div class="foot">
+      <div class="summary">已停用，配置保留</div>
+      <div class="actions"><div class="btn-primary" style="opacity:.35;pointer-events:none">保存</div></div>
+    </div>
+  </div>
+
+  <!-- B 校验错误态 -->
+  <div class="panel">
+    <div class="crumb">设置<i>/</i>主会话模型池</div>
+    <div class="head">
+      <div>
+        <div class="title">主会话模型池</div>
+        <div class="sub">新建会话时按优先级从池中选模型，池内全部占满则回退全局默认模型。</div>
+      <div class="sub" style="margin-top:2px;color:var(--text-4)">已有会话、fork 与子代理不受影响。</div>
+      </div>
+      <div class="switch"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sec"><div class="sec-title">候选模型<span>2 / 6</span></div><div class="link">清空已选</div></div>
+    <div class="group">
+      <div class="group-name">c2a</div>
+      <div class="row on" style="margin-bottom:22px"><input class="cb" type="checkbox" checked><div class="name">paid</div>
+        <div class="field"><label>并发</label><input class="num bad" value="0"></div>
+        <div class="field"><label>优先级</label><input class="num on" value="8"></div>
+        <div class="err">应为 ≥1 的整数</div></div>
+      <div class="row on"><input class="cb" type="checkbox" checked><div class="name">free</div>
+        <div class="field"><label>并发</label><input class="num on" value="3"></div>
+        <div class="field"><label>优先级</label><input class="num on" value="2"></div></div>
+    </div>
+    <div class="foot">
+      <div class="summary">并发上限合计 3 · 有 1 项无效</div>
+      <div class="actions">
+        <div class="btn-ghost">放弃更改</div>
+        <div class="btn-primary disabled">保存</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body></html>

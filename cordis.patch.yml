@@ -1,0 +1,8 @@
+# 标准 DSH bundle 入口；安装器据此挂载 Cordis 插件。
+- insert:
+    - id: main-model-pool
+      name: dsh-main-model-pool
+      config:
+        enabled: false
+        strategy: strict-priority
+        pools: []
