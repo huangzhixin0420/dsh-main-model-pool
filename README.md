@@ -64,6 +64,16 @@
 /opt/homebrew/bin/node ~/.local/bin/dsh web --port 3099 --no-open
 ```
 
+## 设置页
+
+「设置 → 主会话模型池」。严格主备与均衡分配两种状态：
+
+![严格主备](prototype/settings-live-strict.png)
+
+![均衡分配](prototype/settings-live-balanced.png)
+
+选均衡分配时「优先级」输入框置灰，值保留不丢；切回严格主备即可继续编辑。
+
 ## 许可
 
 MIT
